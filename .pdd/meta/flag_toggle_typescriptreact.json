@@ -1,0 +1,13 @@
+{
+  "pdd_version": "0.0.179",
+  "timestamp": "2026-04-27T22:20:43.623212+00:00",
+  "command": "fix",
+  "prompt_hash": "dcb1998760580b6f700ef56686c538e7f893a1831dc3713dc8fc6ec118480955",
+  "code_hash": "51411b647dd86aa0894d5c5f0d3bc30e99e6a70644918bb1342b6f1614030b75",
+  "example_hash": "cecb8b76c3900d347cebef4f6c539f369985d4c2e547626680a1f9760c031f50",
+  "test_hash": "2a54b63770a0519fb3013e8fae40e725414f0f5192756b454be03912f4614c3c",
+  "test_files": {
+    "test_flag_toggle.tsx": "2a54b63770a0519fb3013e8fae40e725414f0f5192756b454be03912f4614c3c"
+  },
+  "include_deps": {}
+}
