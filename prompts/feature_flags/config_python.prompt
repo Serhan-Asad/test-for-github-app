@@ -1,0 +1,47 @@
+<pdd-reason>Loads feature-flag definitions from a YAML file and returns them as a plain dict for the evaluator.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "module": {
+    "functions": [
+      {"name": "load_config", "signature": "(path: str | pathlib.Path)", "returns": "dict"}
+    ]
+  }
+}
+</pdd-interface>
+
+<pdd-dependency>python_preamble.prompt</pdd-dependency>
+
+<include optional>context/python_preamble.prompt</include>
+
+% Goal
+Implement a YAML-based feature-flag configuration loader at `src/feature_flags/config.py` that the evaluator can consume.
+
+% Role & Scope
+You are an expert Python engineer. Build a small, pure module responsible solely for reading flag definitions from a YAML file and returning them as a plain `dict`. The module must not perform schema validation, caching, evaluation, or any other concerns — those belong to other modules in the `feature_flags` package.
+
+% Requirements
+1. Public function: `load_config(path: str | pathlib.Path) -> dict`.
+2. Use `yaml.safe_load` from PyYAML; never use `yaml.load` (security: untrusted input must not deserialize arbitrary Python objects).
+3. Accept both `str` and `pathlib.Path` inputs; open the file in text mode with UTF-8 encoding.
+4. If `safe_load` returns `None` (empty file) or a non-mapping value (list, scalar), normalize to an empty `dict` `{}`.
+5. If the YAML root is a mapping, return it unchanged (a plain `dict`).
+6. Handle these errors gracefully — log a WARNING via `logging.getLogger(__name__)` describing the path and the underlying exception, then return `{}`:
+   - `FileNotFoundError`
+   - `PermissionError`
+   - `OSError` (any other I/O error)
+   - `yaml.YAMLError` (malformed YAML)
+7. Do not raise on the handled error classes above; do not swallow unrelated exceptions (e.g., `TypeError` from a wrong-typed `path` should propagate).
+8. Module must be importable with no side effects — no top-level I/O, no global mutable state.
+9. Include a module-level docstring and a function docstring describing the contract, accepted inputs, return shape, and the graceful-failure behavior.
+10. Type hints required on the public function signature.
+
+% Dependencies
+- Standard library: `logging`, `pathlib`.
+- Third-party: `pyyaml` (imported as `yaml`).
+- No internal `feature_flags` dependencies (this module is a leaf).
+
+% Deliverables
+- Code: `src/feature_flags/config.py`
+- The module exposes only `load_config` as its public API (use `__all__ = ["load_config"]`).
