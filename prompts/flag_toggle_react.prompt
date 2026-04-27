@@ -1,0 +1,36 @@
+<pdd-reason>Dashboard React component that conditionally renders an experiment row based on a feature-flag prop.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "frontend",
+  "frontend": {
+    "pages": [
+      {"name": "FlagToggle", "route": "frontend/components/FlagToggle.tsx"}
+    ]
+  }
+}
+</pdd-interface>
+
+% You are an expert React + TypeScript engineer. Create a dashboard component `FlagToggle` that conditionally renders an experiment row based on a feature-flag prop.
+
+% Role & Scope
+A presentational React function component that gates its children on an `enabled` flag. It performs no data fetching, no flag resolution, and no side effects — the parent passes `enabled` as a prop. Lives in `frontend/components/FlagToggle.tsx` with a co-located test file.
+
+% Requirements
+1. Export a named React function component `FlagToggle` (also default export) with props typed as `{ flagName: string; enabled: boolean; children: React.ReactNode }`.
+2. When `enabled` is `false`, render nothing (return `null`).
+3. When `enabled` is `true`, render `children` wrapped in a single container `<div>` that represents the experiment row.
+4. The container `<div>` must include the attributes `data-testid="flag-toggle"` and `data-flag={flagName}` so tests and downstream code can target it.
+5. The container `<div>` must include a stable CSS class name `experiment-row` for styling hooks.
+6. The component must be a pure function with no side effects, no internal state, and no use of hooks.
+7. Import only from `react`; no other runtime dependencies.
+
+% Test Requirements
+Create a co-located test file `frontend/components/FlagToggle.test.tsx` using React Testing Library + Jest with at least these cases:
+1. Renders children inside the experiment row when `enabled` is `true`.
+2. Renders nothing when `enabled` is `false` (queryByTestId returns null).
+3. Sets `data-flag` to the value of the `flagName` prop on the container.
+
+% Deliverables
+- Code: `frontend/components/FlagToggle.tsx`
+- Test: `frontend/components/FlagToggle.test.tsx`
