@@ -1,0 +1,43 @@
+<pdd-reason>Runtime feature flag evaluator with deterministic per-user rollout bucketing via SHA-256 hashing.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "module": {
+    "functions": [
+      {"name": "FeatureFlagEvaluator.__init__", "signature": "(self, flags: Mapping[str, dict])", "returns": "None"},
+      {"name": "FeatureFlagEvaluator.is_enabled", "signature": "(self, flag_name: str, uid: str)", "returns": "bool"}
+    ]
+  }
+}
+</pdd-interface>
+
+% You are an expert Python engineer. Your goal is to implement a runtime feature flag evaluator at `src/feature_flags/evaluator.py`.
+
+% Role & Scope
+A standalone library module that decides whether a named feature flag is enabled for a given user identifier. The evaluator is independent of how flag definitions are loaded — it accepts them via constructor injection — so it has zero coupling to any config-loader file format.
+
+% Requirements
+1. Public class `FeatureFlagEvaluator` whose constructor accepts a single argument `flags`: a mapping (dict-like) of flag name (`str`) → flag definition (`dict`). Store a reference to the mapping; do not deep-copy.
+2. Public method `is_enabled(self, flag_name: str, uid: str) -> bool` that returns the evaluation result.
+3. Module-level convenience function `is_enabled(flag_name: str, uid: str, flags: Mapping[str, dict]) -> bool` is **not** required; only the class API is part of the contract.
+4. Flag definition shape (all keys optional unless stated):
+   - `enabled` (`bool`): master switch. If absent or falsy, the flag is off.
+   - `rollout` (`int` or `float`, 0–100 inclusive): percentage of users for whom the flag is on when `enabled` is true. If absent, treat as 100 (fully on).
+5. Resolution rules, in order:
+   a. If `flag_name` is missing from the mapping → return `False`.
+   b. If the definition is not a mapping, or `enabled` is missing/falsy → return `False`.
+   c. If `rollout` is absent → return `True`.
+   d. If `rollout <= 0` → return `False`. If `rollout >= 100` → return `True`.
+   e. Otherwise, return `True` iff the user falls into the rollout bucket (see requirement 6).
+6. Bucketing must be deterministic and stable across processes and Python versions:
+   - Compute `bucket = int(sha256(f"{flag_name}:{uid}".encode("utf-8")).hexdigest(), 16) % 100`.
+   - Return `bucket < rollout`.
+   - The bucket MUST depend on both `flag_name` and `uid` so that the same `uid` is not always in (or always out of) every partial rollout.
+7. Defensive input handling: if `flag_name` or `uid` is not a `str`, raise `TypeError`. Do not silently coerce.
+8. Use only the Python standard library (`hashlib`, `typing`). No third-party dependencies.
+9. Add a concise module docstring and a docstring on `FeatureFlagEvaluator` and `is_enabled` describing the contract above.
+10. Module must be importable as `from feature_flags.evaluator import FeatureFlagEvaluator` when `src/` is on `sys.path`.
+
+% Deliverables
+- Code: `src/feature_flags/evaluator.py`
