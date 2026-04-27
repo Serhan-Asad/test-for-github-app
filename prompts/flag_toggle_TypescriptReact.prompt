@@ -1,0 +1,34 @@
+<pdd-reason>Pure presentational React component that gates UI fragments behind a feature flag's enabled state.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "frontend",
+  "frontend": {
+    "pages": [
+      {"name": "FlagToggle", "route": "frontend/components/FlagToggle.tsx"}
+    ]
+  }
+}
+</pdd-interface>
+
+% Goal
+You are an expert TypeScript/React engineer. Create a pure presentational `FlagToggle` component that conditionally renders its children based on a feature flag's enabled state.
+
+% Role & Scope
+A small, prop-driven dashboard component used to gate experiment rows and other UI fragments behind a feature flag. The component performs no flag lookup itself — it simply reflects the `enabled` prop passed in by the caller. No side effects, no state, no data fetching.
+
+% Requirements
+1. Component: `FlagToggle` — a default-exported React function component.
+2. Props interface (named `FlagToggleProps`, also exported):
+   - `flagName: string` — the feature flag identifier (informational; surfaced via a `data-flag-name` attribute when rendered).
+   - `enabled: boolean` — when `false`, the component renders nothing (returns `null`); when `true`, it renders its children.
+   - `children?: React.ReactNode` — optional content to render when the flag is on.
+3. When `enabled` is `false`, the component MUST return `null` so the experiment row does not appear in the DOM.
+4. When `enabled` is `true`, the component renders a `<div data-flag-name={flagName}>{children}</div>` wrapper so consumers and tests can locate it via the `data-flag-name` attribute.
+5. The component is a pure function of its props — no hooks, no state, no effects.
+6. Strict TypeScript: explicit prop types, no `any`.
+
+% Deliverables
+- Code: `frontend/components/FlagToggle.tsx`
+- Default export: `FlagToggle`
+- Named export: `FlagToggleProps`
