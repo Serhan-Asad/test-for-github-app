@@ -1,0 +1,38 @@
+<pdd-reason>Pure stateless classifier that routes a GitHub-style issue dict to a label.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "module": {
+    "functions": [
+      {"name": "route_issue", "signature": "(issue: dict)", "returns": "str"}
+    ]
+  }
+}
+</pdd-interface>
+
+<include optional>context/python_preamble.prompt</include>
+
+% Goal
+Provide a single pure function `route_issue` that classifies a GitHub-style issue dict and returns a routing label.
+
+% Role & Scope
+A small stateless service module. No I/O, no network calls, no logging side effects. Holds the canonical routing decision used by the orchestrator and any future caller.
+
+% Requirements
+1. Function signature: `route_issue(issue: dict) -> str`.
+2. Input `issue` is a dict that may contain string keys `title`, `body`, and a list `labels` (each label a dict with key `name` or a plain string). Treat any of these as optional.
+3. Return one of the routing labels: `"bug"`, `"feature"`, `"question"`, or `"other"`.
+4. Decision rule (apply in order, first match wins):
+   a. If any label name (case-insensitive) equals `bug`, return `"bug"`.
+   b. Else if any label name equals `enhancement` or `feature`, return `"feature"`.
+   c. Else if any label name equals `question`, return `"question"`.
+   d. Else inspect `title` + `body` (lowercased): if it contains `"bug"` or `"error"` → `"bug"`; if it contains `"feature"` or `"add "` → `"feature"`; if it contains `"?"` or `"how "` → `"question"`.
+   e. Otherwise return `"other"`.
+5. Robustness: missing keys, `None` values, non-string entries in `labels`, and an empty dict must all return `"other"` (after rules above fail) without raising.
+6. The function must be the only public symbol named `route_issue`. The legacy name `analyze_issue` must NOT exist anywhere in the generated module (no alias, no shim, no comment referencing it).
+7. Pure: no module-level state, no logging, no exceptions raised for malformed input.
+
+% Deliverables
+- Code: `src/services/issue_analyzer.py`
+- Public symbol: `route_issue`
