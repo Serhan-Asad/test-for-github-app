@@ -1,0 +1,36 @@
+<pdd-reason>Loads and validates YAML feature flag definitions into typed, immutable FlagDefinition records.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "module": {
+    "functions": [
+      {"name": "load_flags", "signature": "(path: str)", "returns": "dict[str, FlagDefinition]"}
+    ]
+  }
+}
+</pdd-interface>
+
+% You are an expert Python engineer. Implement a YAML-based feature flag config loader at `src/feature_flags/config.py`.
+
+% Role & Scope
+A small, dependency-light module that parses a YAML file describing feature flags into typed, immutable `FlagDefinition` records and returns them as a `dict[str, FlagDefinition]` keyed by flag name. The module is responsible only for loading and validating the on-disk schema; it does not evaluate, cache, or roll out flags.
+
+% Requirements
+1. Public API: `load_flags(path: str) -> dict[str, FlagDefinition]`. `path` is the filesystem path to a YAML file.
+2. Define a frozen dataclass `FlagDefinition` with fields: `name: str`, `enabled: bool`, `rollout: float | None = None`.
+3. Define a custom exception `ConfigError(Exception)` used for every non-`OSError` failure raised by this module.
+4. The YAML file must have a top-level mapping with a `flags` key whose value is a mapping of `flag_name -> {enabled: bool, rollout?: number}`. Any other top-level shape raises `ConfigError`.
+5. Parse YAML using `yaml.safe_load` (PyYAML). A `yaml.YAMLError` during parsing must be re-raised as `ConfigError` with a message that includes the offending file path and the underlying parser message.
+6. A missing file (`FileNotFoundError` from `open`) must be re-raised as `ConfigError` with a clear message naming the missing path. Do not let raw `FileNotFoundError` escape.
+7. Validation, each violation raising `ConfigError` with a message naming the offending flag:
+   - `name` in the returned dict must equal the YAML key; do not allow a separate `name:` field inside the flag body that disagrees with its key.
+   - `enabled` is required and must be a Python `bool` (reject ints, strings like `"true"`, etc.).
+   - `rollout`, if present, must be a number in the closed interval `[0, 100]`; reject other types or out-of-range values. Absent `rollout` becomes `None`.
+   - Unknown keys inside a flag body are rejected.
+8. An empty file or `flags:` mapping with zero entries is valid and returns an empty dict (no error).
+9. The module must not perform any I/O beyond reading the given file, must not mutate global state, and must be safe to call repeatedly.
+
+% Deliverables
+- Code: `src/feature_flags/config.py`
+- Public symbols exported from the module: `load_flags`, `FlagDefinition`, `ConfigError`.
