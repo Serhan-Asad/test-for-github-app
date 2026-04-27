@@ -1,0 +1,43 @@
+<pdd-reason>Fail-closed backend feature flag evaluator answering is_enabled from in-memory flag state.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "module": {
+    "functions": [
+      {"name": "is_enabled", "signature": "(flag_name: str, uid: str)", "returns": "bool"},
+      {"name": "_set_flags", "signature": "(flags: dict[str, bool])", "returns": "None"}
+    ]
+  }
+}
+</pdd-interface>
+
+<pdd-dependency>python_preamble.prompt</pdd-dependency>
+
+<include optional>context/python_preamble.prompt</include>
+
+% Goal
+Provide a backend feature flag evaluator that answers `is_enabled(flag_name, uid) -> bool` from in-memory state, fail-closed on unknown or malformed input.
+
+% Role & Scope
+A small, dependency-free module at `src/feature_flags/evaluator.py`. Owns a module-level mapping of flag name to enabled state and exposes a single read API plus a test/loader seam for populating that state. The flag state is populated by a sibling config loader (out of scope here); this module does not import the loader and never raises on unknown flags.
+
+% Public API
+- `is_enabled(flag_name: str, uid: str) -> bool`
+- `_set_flags(flags: dict[str, bool]) -> None` (test/loader seam)
+- `_FLAGS: dict[str, bool]` (module-level state, initially empty)
+
+% Requirements
+1. `is_enabled(flag_name, uid)` returns `True` only when `flag_name` is a key in `_FLAGS` whose value is truthy; otherwise returns `False`.
+2. Unknown flag names return `False` (never raise `KeyError`).
+3. Non-string `flag_name` (e.g., `None`, int) returns `False` without raising.
+4. `uid` is accepted in the signature for forward compatibility (per-user targeting in a future revision) but MUST NOT influence the result in this version.
+5. The function never raises for any input combination; it is fail-closed.
+6. `_set_flags(flags)` replaces the contents of `_FLAGS` atomically (clear + update) so callers see a consistent snapshot. It accepts a `dict[str, bool]`-like mapping and coerces each value to `bool`.
+7. `_FLAGS` is a module-level `dict` initialized to empty; it is the single source of in-memory state. No singletons, classes, or globals beyond this dict.
+8. No I/O, no logging side effects, no external dependencies — standard library only.
+9. Include a docstring on `is_enabled` describing the fail-closed contract and that `uid` is reserved for future per-user evaluation.
+10. Type-annotate the public API.
+
+% Deliverables
+- Code: `src/feature_flags/evaluator.py`
