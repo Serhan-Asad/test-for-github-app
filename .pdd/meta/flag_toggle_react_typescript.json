@@ -1,0 +1,13 @@
+{
+  "pdd_version": "0.0.179",
+  "timestamp": "2026-04-27T22:57:03.249027+00:00",
+  "command": "fix",
+  "prompt_hash": "a2c2649924624d83284090ef5756762245246feceb4b600edff81c3f4cc107cf",
+  "code_hash": "2018daef9aceda1b1c5101f4ddfae3eebf8a319af42c9dc95f99aed603c3d974",
+  "example_hash": "0698e72e2942d1d68e6279369b35cca84deda011282e098d5f94a6241c8dc497",
+  "test_hash": "102932b95b2a5433a2d8991dbe097ab6f0fc401134327f22f19def879b4bd0ea",
+  "test_files": {
+    "test_flag_toggle_react.ts": "102932b95b2a5433a2d8991dbe097ab6f0fc401134327f22f19def879b4bd0ea"
+  },
+  "include_deps": {}
+}

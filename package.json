@@ -1,0 +1,21 @@
+{
+  "name": "pdd_job_o1bk5kdizzcysoxi1hio_5rl6vl07",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/react": "^19.2.14",
+    "react": "^19.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
