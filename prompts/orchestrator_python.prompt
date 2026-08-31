@@ -1,0 +1,44 @@
+<pdd-reason>Thin orchestration layer that delegates issue classification to the analyzer service.</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "module": {
+    "functions": [
+      {"name": "handle_issue", "signature": "(issue: dict)", "returns": "dict"}
+    ]
+  }
+}
+</pdd-interface>
+
+<pdd-dependency>issue_analyzer_python.prompt</pdd-dependency>
+
+<include optional>context/python_preamble.prompt</include>
+
+% Goal
+Provide an orchestration entry point `handle_issue` that routes an incoming issue using `route_issue` and returns a structured result.
+
+% Role & Scope
+Thin coordination layer between an external caller (CLI / webhook handler) and the issue analyzer service. Owns no domain logic of its own; delegates classification to the analyzer.
+
+% Dependencies
+<issue_analyzer>
+  Interface (consumed, not implemented here):
+  - Module: `src.services.issue_analyzer`
+  - Public function: `route_issue(issue: dict) -> str`
+  - Returns one of: `"bug"`, `"feature"`, `"question"`, `"other"`.
+  - Pure: no I/O, no exceptions for malformed input.
+  - The legacy name `analyze_issue` no longer exists; only `route_issue` is importable.
+</issue_analyzer>
+
+% Requirements
+1. Import the analyzer with: `from src.services.issue_analyzer import route_issue`. The import name MUST be `route_issue` — never `analyze_issue`.
+2. Function signature: `handle_issue(issue: dict) -> dict`.
+3. Behavior: call `route_issue(issue)` once, and return a dict of the form `{"issue": issue, "route": <label>}` where `<label>` is the analyzer's return value.
+4. If `issue` is not a dict (e.g. `None`), coerce to `{}` before calling the analyzer; never raise.
+5. No retries, no logging, no caching — keep it a thin pass-through so the rename is the only coupling between this module and the analyzer.
+6. The legacy symbol `analyze_issue` must NOT appear anywhere in this module (no import, no fallback, no comment).
+
+% Deliverables
+- Code: `src/orchestrator.py`
+- Public symbol: `handle_issue`
