@@ -1,0 +1,43 @@
+{
+  "e4b19613d30fe652": {
+    "argv": [
+      "--force",
+      "sync",
+      "evaluator",
+      "--dry-run",
+      "--agentic",
+      "--no-steer"
+    ],
+    "project_root": "/tmp/pdd_job_vwQiSYGNZjo1n1i38lDK_j7cmkz0i",
+    "fingerprint": "4dcfffa3956b2e216d1f1acf38b2f0cc982da8e7ee2439aaadb19cffbff255b0",
+    "git_head": "6c5bc5cd2de3da72fe2d2cf161cb2b91c820d2d0",
+    "subcommand": "sync",
+    "timestamp": 1777330340.2214172
+  },
+  "5ba65282c0184812": {
+    "argv": [
+      "--force",
+      "sync",
+      "evaluator",
+      "--agentic",
+      "--no-steer",
+      "--one-session"
+    ],
+    "project_root": "/tmp/pdd_job_vwQiSYGNZjo1n1i38lDK_j7cmkz0i",
+    "fingerprint": "de689f02cdce3d40fd82ca1fcb7161139ff90c294fc7f9db840782e13805ed30",
+    "git_head": "6c5bc5cd2de3da72fe2d2cf161cb2b91c820d2d0",
+    "subcommand": "sync",
+    "timestamp": 1777330493.6604989
+  },
+  "dc4bab2efcdedf6d": {
+    "argv": [
+      "sync",
+      "https://github.com/Serhan-Asad/test-for-github-app/issues/18"
+    ],
+    "project_root": "/tmp/pdd_job_vwQiSYGNZjo1n1i38lDK_j7cmkz0i",
+    "fingerprint": "de689f02cdce3d40fd82ca1fcb7161139ff90c294fc7f9db840782e13805ed30",
+    "git_head": "6c5bc5cd2de3da72fe2d2cf161cb2b91c820d2d0",
+    "subcommand": "sync",
+    "timestamp": 1777330497.149615
+  }
+}
